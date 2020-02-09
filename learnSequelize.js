@@ -12,10 +12,11 @@ function connect() {
   let sequelize = new Sequelize(
     "devzahid",
     "postgres",
-    "DozGz4136NowuyA33M3Y",
+    "changeme", //"DozGz4136NowuyA33M3Y",
     {
       dialect: "postgres",
-      host: "dbzahid.c5gsofzz46z5.eu-central-1.rds.amazonaws.com",
+      //host: "dbzahid.c5gsofzz46z5.eu-central-1.rds.amazonaws.com",
+      host: "http://localhost",
       port: "5432"
     }
   );

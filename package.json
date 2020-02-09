@@ -4,12 +4,13 @@
   "description": "",
   "main": "learnSequelize.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node server.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "express": "4.17.1",
     "pg": "7.18.1",
     "sequelize": "5.21.3"
   }

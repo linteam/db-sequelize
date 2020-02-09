@@ -1,0 +1,17 @@
+Sequelize ORM (Object Relational Mapping)
+
+Destekledigi DB'ler:
+MySQL, PostgreSQL, SQLite
+
+Relational Databases: Stored data in tables
+
+Model -- transform into table ---> table
+npm i sequelize     ile projene ekleyebilirsin.
+
+
+Primary KEY sequelize ile id kolonunda otomatik olarak olusturulur.
+
+Sequelize is promise-based by default. Bunun icerde bleubird kutuphanesini kullanir.
+Bu kutuphanede olan then, catch metotlari kullanilabilir.
+
+SQL Injection'a karsi korumali
