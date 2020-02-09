@@ -7,4 +7,11 @@ app.listen(port, () => {
   console.log("Running server on port " + port);
 });
 
-connect();
+app.get("/", async (req, res) => {
+  try {
+    const user = await connect();
+    res.json(user);
+  } catch (error) {
+    res.status(404).send(error.message);
+  }
+});

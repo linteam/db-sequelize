@@ -29,7 +29,25 @@ async function connect() {
       primaryKey: true,
       defaultValue: Sequelize.UUIDV4
     },
-    name: Sequelize.STRING,
+    name: {
+      type: Sequelize.STRING,
+      validate: {
+        len: [3]
+      }
+    },
+    email: {
+      type: Sequelize.STRING,
+      validate: {
+        //isCreditCard: true
+        isEmail: {
+          msg: "Lutfen gecerli bir email giriniz"
+        },
+        contains: {
+          args: ["ibnhaldun.edu.tr"],
+          msg: "Error: Field must contain ibnhaldun.edu.tr"
+        }
+      }
+    },
     bio: Sequelize.JSON
   });
 
@@ -38,9 +56,11 @@ async function connect() {
     "Post",
     {
       uuid: {
-        type: Sequelize.UUID,
+        type: Sequelize.UUID, //ilk once type belirtilmeli
         primaryKey: true,
         defaultValue: Sequelize.UUIDV4
+        /*ATTRIBUTES:
+        unique, allowNull, validate*/
       },
       name: Sequelize.STRING
     },
@@ -54,14 +74,17 @@ async function connect() {
       force: true,
       logging: console.log
     });
-    await User.create({
+    const created = await User.create({
       name: "Zahid",
+      email: "a@ibnhaldun.edu.tr",
+      //creditCard: "2342342343434323",
       bio: { settings: "deneme" }
     });
     await connection.authenticate();
     console.log("Database connection established successfully");
+    return created;
   } catch (error) {
-    console.log("Baglanti Hatasi: ", error.message);
+    throw error;
   }
 }
 
