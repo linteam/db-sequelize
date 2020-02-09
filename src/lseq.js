@@ -1,5 +1,5 @@
 const Sequelize = require("sequelize");
-
+const bcrypt = require("bcrypt");
 async function connect() {
   const db = {
     name: "devzahid",
@@ -23,33 +23,45 @@ async function connect() {
   );
 
   //USER Tablosunu olusturma
-  const User = connection.define("User", {
-    uuid: {
-      type: Sequelize.UUID, //Universal Unique Identifier
-      primaryKey: true,
-      defaultValue: Sequelize.UUIDV4
+  const User = connection.define(
+    "User",
+    {
+      uuid: {
+        type: Sequelize.UUID, //Universal Unique Identifier
+        primaryKey: true,
+        defaultValue: Sequelize.UUIDV4
+      },
+      name: {
+        type: Sequelize.STRING,
+        validate: {
+          len: [3]
+        }
+      },
+      password: Sequelize.STRING,
+      email: {
+        type: Sequelize.STRING,
+        validate: {
+          //isCreditCard: true
+          isEmail: {
+            msg: "Lutfen gecerli bir email giriniz"
+          },
+          contains: {
+            args: ["ibnhaldun.edu.tr"],
+            msg: "Error: Field must contain ibnhaldun.edu.tr"
+          }
+        }
+      },
+      bio: Sequelize.JSON
     },
-    name: {
-      type: Sequelize.STRING,
-      validate: {
-        len: [3]
-      }
-    },
-    email: {
-      type: Sequelize.STRING,
-      validate: {
-        //isCreditCard: true
-        isEmail: {
-          msg: "Lutfen gecerli bir email giriniz"
-        },
-        contains: {
-          args: ["ibnhaldun.edu.tr"],
-          msg: "Error: Field must contain ibnhaldun.edu.tr"
+    {
+      hooks: {
+        afterValidate: user => {
+          //beforeCreate
+          user.password = bcrypt.hashSync(user.password, 8);
         }
       }
-    },
-    bio: Sequelize.JSON
-  });
+    }
+  );
 
   //POSTS Tablosu
   const Post = connection.define(
@@ -77,7 +89,7 @@ async function connect() {
     const created = await User.create({
       name: "Zahid",
       email: "a@ibnhaldun.edu.tr",
-      //creditCard: "2342342343434323",
+      password: "123",
       bio: { settings: "deneme" }
     });
     await connection.authenticate();
