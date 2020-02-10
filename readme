@@ -15,3 +15,17 @@ Sequelize is promise-based by default. Bunun icerde bleubird kutuphanesini kulla
 Bu kutuphanede olan then, catch metotlari kullanilabilir.
 
 SQL Injection'a karsi korumali
+
+ASSOCIATIONS
+    Tablolar arasi iliskiler.
+One to One
+    Post.belongsTo(User); //Post tablosunda UserId kolonu olusturur.
+    Post tablosunu sorguladiginda include property true dersen user da gelir.
+    Post.findById('1', {
+        include: [{
+            model: User,
+            attributes: ['name']
+        }]
+    })
+One to Many
+Many to Many

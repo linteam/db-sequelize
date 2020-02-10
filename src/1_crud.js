@@ -1,36 +1,12 @@
 const Sequelize = require("sequelize");
+const DBHandler = require("./0_db");
 const bcrypt = require("bcrypt");
 const Op = Sequelize.Op;
-class DBHandler {
-  constructor() {
-    console.log("CONSTRUCTOR");
-    this.User = {};
-  }
-
-  async connect() {
-    const db = {
-      name: "devzahid",
-      username: "postgres",
-      password: "changeme",
-      options: {
-        dialect: "postgres",
-        host: "localhost",
-        port: "5432"
-      }
-      // , Global tanimlama yerine modele 3. parametre verilebilir.
-      // define: {
-      //   freezeTableName: false
-      // }
-    };
-    const connection = new Sequelize(
-      db.name,
-      db.username,
-      db.password,
-      db.options
-    );
-
+class CrudHandler {
+  constructor() {}
+  async buildUserTable() {
     //USER Tablosunu olusturma
-    this.User = connection.define(
+    this.User = DBHandler.connection.define(
       "User",
       {
         uuid: {
@@ -76,40 +52,17 @@ class DBHandler {
       }
     );
 
-    //POSTS Tablosu
-    const Post = connection.define(
-      "Post",
-      {
-        uuid: {
-          type: Sequelize.UUID, //ilk once type belirtilmeli
-          primaryKey: true,
-          defaultValue: Sequelize.UUIDV4
-          /*ATTRIBUTES:
-          unique, allowNull, validate*/
-        },
-        name: Sequelize.STRING
-      },
-      {
-        timestamps: false
-      }
-    );
+    await DBHandler.connection.sync({
+      force: false,
+      logging: console.log
+    });
 
-    try {
-      await connection.sync({
-        force: false,
-        logging: console.log
-      });
-      const created = await this.User.create({
-        name: "Zahid",
-        email: "a@ibnhaldun.edu.tr",
-        password: "123"
-      });
-      await connection.authenticate();
-      console.log("Database connection established successfully");
-      return created;
-    } catch (error) {
-      throw error;
-    }
+    const created = await this.User.create({
+      name: "Zahid",
+      email: "a@ibnhaldun.edu.tr",
+      password: "123"
+    });
+    return created;
   }
 
   async createUser(user) {
@@ -158,4 +111,4 @@ class DBHandler {
   }
 }
 
-module.exports = DBHandler;
+module.exports = CrudHandler;

@@ -1,12 +1,16 @@
 const express = require("express");
-const DBHandler = require("./src/lseq");
+const DBHandler = require("./src/0_db");
+const CrudHandler = require("./src/1_crud");
 const app = express();
 const port = 8001;
 
 const db = new DBHandler();
+console.log("Connect DB...");
+db.connect();
+const crud = new CrudHandler();
 
-app.listen(port, () => {
-  db.connect();
+app.listen(port, async () => {
+  await crud.buildUserTable();
   console.log("Running server on port " + port);
 });
 
@@ -15,7 +19,7 @@ app.get("/mu", async (req, res) => {
   try {
     console.log();
     const user = req.query; //req.body.user; post olsa boyle al
-    await db.createUser(user);
+    await crud.createUser(user);
     res.json(user);
   } catch (error) {
     res.status(404).send(error.message);
@@ -24,7 +28,7 @@ app.get("/mu", async (req, res) => {
 
 app.get("/findAll", async (req, res) => {
   try {
-    const ret = await db.findAll();
+    const ret = await crud.findAll();
     res.json(ret);
   } catch (error) {
     res.status(404).send(error.message);
@@ -33,7 +37,7 @@ app.get("/findAll", async (req, res) => {
 
 app.get("/findByPk", async (req, res) => {
   try {
-    const ret = await db.findByPk(req.query.id);
+    const ret = await crud.findByPk(req.query.id);
     res.json(ret);
   } catch (error) {
     res.status(404).send(error.message);
@@ -51,7 +55,7 @@ app.put("/update", async (req, res) => {
 
 app.delete("/remove", async (req, res) => {
   try {
-    await db.destroy(req.query.id);
+    await crud.destroy(req.query.id);
     res.send("Item deleted");
   } catch (error) {
     res.status(404).send(error.message);
