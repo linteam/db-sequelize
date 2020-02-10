@@ -1,6 +1,7 @@
 const express = require("express");
 const DBHandler = require("./src/0_db");
 const CrudHandler = require("./src/1_crud");
+const Asso = require("./src/2_association");
 const app = express();
 const port = 8001;
 
@@ -8,9 +9,15 @@ const db = new DBHandler();
 console.log("Connect DB...");
 db.connect();
 const crud = new CrudHandler();
+let asso = null;
 
 app.listen(port, async () => {
-  await crud.buildUserTable();
+  const uuid = await CrudHandler.buildUserTable();
+  console.log("--- User table olusturuldu");
+  asso = new Asso();
+  await Asso.buildPostTable(uuid);
+  console.log("--- Post table olusturuldu");
+
   console.log("Running server on port " + port);
 });
 
@@ -57,6 +64,15 @@ app.delete("/remove", async (req, res) => {
   try {
     await crud.destroy(req.query.id);
     res.send("Item deleted");
+  } catch (error) {
+    res.status(404).send(error.message);
+  }
+});
+
+app.get("/posts", async (req, res) => {
+  try {
+    const posts = await asso.findAll();
+    res.json(posts);
   } catch (error) {
     res.status(404).send(error.message);
   }

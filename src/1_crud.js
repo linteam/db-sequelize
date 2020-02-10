@@ -4,9 +4,9 @@ const bcrypt = require("bcrypt");
 const Op = Sequelize.Op;
 class CrudHandler {
   constructor() {}
-  async buildUserTable() {
+  static async buildUserTable() {
     //USER Tablosunu olusturma
-    this.User = DBHandler.connection.define(
+    CrudHandler.User = DBHandler.connection.define(
       "User",
       {
         uuid: {
@@ -52,21 +52,19 @@ class CrudHandler {
       }
     );
 
-    await DBHandler.connection.sync({
-      force: false,
-      logging: console.log
-    });
+    await DBHandler.syncConnection(true);
 
-    const created = await this.User.create({
+    const created = await CrudHandler.User.create({
       name: "Zahid",
       email: "a@ibnhaldun.edu.tr",
       password: "123"
     });
-    return created;
+
+    return created.uuid;
   }
 
   async createUser(user) {
-    const created = await this.User.create({
+    const created = await CrudHandler.User.create({
       name: user.name,
       email: user.email,
       password: user.password
@@ -75,7 +73,7 @@ class CrudHandler {
   }
 
   async findAll() {
-    const retVal = await this.User.findAll({
+    const retVal = await CrudHandler.User.findAll({
       where: {
         //name: "David"
         name: {
@@ -89,13 +87,13 @@ class CrudHandler {
   }
 
   async findByPk(id) {
-    const retVal = await this.User.findByPk(id);
+    const retVal = await CrudHandler.User.findByPk(id);
     return retVal;
   }
 
   async update(id) {
     //update sonucu etkilenen satır sayısını doner
-    const rows = await this.User.update(
+    const rows = await CrudHandler.User.update(
       { name: "Hakan", password: "Celik" },
       {
         where: { uuid: id }
@@ -105,7 +103,7 @@ class CrudHandler {
   }
 
   async destroy(id) {
-    await this.User.destroy({
+    await CrudHandler.User.destroy({
       where: { uuid: id }
     });
   }

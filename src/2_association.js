@@ -1,17 +1,13 @@
 const Sequelize = require("sequelize");
 const DBHandler = require("./0_db");
-const CrudHandler = require("./src/1_crud");
-const Op = Sequelize.Op;
+const CrudHandler = require("./1_crud");
 
 class Asso {
-  constructor() {
-    this.Post = {};
-    this.crud = new CrudHandler();
-  }
+  constructor() {}
 
-  async buildPostTable() {
+  static async buildPostTable(userId) {
     //POSTS Tablosu
-    const Post = DBHandler.connection.define(
+    Asso.Post = DBHandler.connection.define(
       "Post",
       {
         uuid: {
@@ -28,20 +24,24 @@ class Asso {
         timestamps: false
       }
     );
+
+    //puts foreignKey UserId in Post table
+    Asso.Post.belongsTo(CrudHandler.User);
+
+    await DBHandler.syncConnection();
+
+    await Asso.Post.create({
+      UserUuid: userId,
+      title: "First Post",
+      content: "post content 1"
+    });
   }
 
   async findAll() {
-    const retVal = await this.User.findAll({
-      where: {
-        //name: "David"
-        name: {
-          [Op.like]: "Dav%" //Dav ile baslayan isimleri getir
-        }
-        // [Op.and] {a:5}
-        //gt:50, lte: 45, in: [1,2,3]
-      }
+    const posts = await Asso.Post.findAll({
+      include: [CrudHandler.User]
     });
-    return retVal;
+    return posts;
   }
 }
 

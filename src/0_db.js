@@ -28,6 +28,13 @@ class DBHandler {
     );
   }
 
+  static async syncConnection(isForced = false) {
+    await DBHandler.connection.sync({
+      force: isForced,
+      logging: console.log
+    });
+  }
+
   async connect() {
     try {
       DBHandler.buildConnection();
