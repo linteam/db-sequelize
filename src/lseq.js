@@ -150,6 +150,12 @@ class DBHandler {
     );
     return rows;
   }
+
+  async destroy(id) {
+    await this.User.destroy({
+      where: { uuid: id }
+    });
+  }
 }
 
 module.exports = DBHandler;

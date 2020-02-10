@@ -48,3 +48,12 @@ app.put("/update", async (req, res) => {
     res.status(404).send(error.message);
   }
 });
+
+app.delete("/remove", async (req, res) => {
+  try {
+    await db.destroy(req.query.id);
+    res.send("Item deleted");
+  } catch (error) {
+    res.status(404).send(error.message);
+  }
+});
