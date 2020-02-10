@@ -10,13 +10,22 @@ app.listen(port, () => {
   console.log("Running server on port " + port);
 });
 
-//http://localhost:8001/mu?name=hakan&email=hakan@ibnhaldun.edu.tr&password=123
+//http://localhost:8001/mu?name=David&email=hakan@ibnhaldun.edu.tr&password=123
 app.get("/mu", async (req, res) => {
   try {
     console.log();
     const user = req.query; //req.body.user; post olsa boyle al
     await db.createUser(user);
     res.json(user);
+  } catch (error) {
+    res.status(404).send(error.message);
+  }
+});
+
+app.get("/fa", async (req, res) => {
+  try {
+    const ret = await db.findAll();
+    res.json(ret);
   } catch (error) {
     res.status(404).send(error.message);
   }

@@ -1,6 +1,6 @@
 const Sequelize = require("sequelize");
 const bcrypt = require("bcrypt");
-
+const Op = Sequelize.Op;
 class DBHandler {
   constructor() {
     console.log("CONSTRUCTOR");
@@ -113,14 +113,26 @@ class DBHandler {
   }
 
   async createUser(user) {
-    console.log("user", user);
-
     const created = await this.User.create({
       name: user.name,
       email: user.email,
       password: user.password
     });
     return created;
+  }
+
+  async findAll() {
+    const retVal = await this.User.findAll({
+      where: {
+        //name: "David"
+        name: {
+          [Op.like]: "Dav%" //Dav ile baslayan isimleri getir
+        }
+        // [Op.and] {a:5}
+        //gt:50, lte: 45, in: [1,2,3]
+      }
+    });
+    return retVal;
   }
 }
 
