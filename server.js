@@ -22,9 +22,18 @@ app.get("/mu", async (req, res) => {
   }
 });
 
-app.get("/fa", async (req, res) => {
+app.get("/findAll", async (req, res) => {
   try {
     const ret = await db.findAll();
+    res.json(ret);
+  } catch (error) {
+    res.status(404).send(error.message);
+  }
+});
+
+app.get("/findById", async (req, res) => {
+  try {
+    const ret = await db.findById(req.query.id);
     res.json(ret);
   } catch (error) {
     res.status(404).send(error.message);

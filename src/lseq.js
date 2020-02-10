@@ -134,6 +134,11 @@ class DBHandler {
     });
     return retVal;
   }
+
+  async findById(id) {
+    const retVal = await this.User.findByPk(id);
+    return retVal;
+  }
 }
 
 module.exports = DBHandler;
