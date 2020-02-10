@@ -31,9 +31,18 @@ app.get("/findAll", async (req, res) => {
   }
 });
 
-app.get("/findById", async (req, res) => {
+app.get("/findByPk", async (req, res) => {
   try {
-    const ret = await db.findById(req.query.id);
+    const ret = await db.findByPk(req.query.id);
+    res.json(ret);
+  } catch (error) {
+    res.status(404).send(error.message);
+  }
+});
+
+app.put("/update", async (req, res) => {
+  try {
+    const ret = await db.update(req.query.id);
     res.json(ret);
   } catch (error) {
     res.status(404).send(error.message);

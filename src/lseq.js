@@ -135,9 +135,20 @@ class DBHandler {
     return retVal;
   }
 
-  async findById(id) {
+  async findByPk(id) {
     const retVal = await this.User.findByPk(id);
     return retVal;
+  }
+
+  async update(id) {
+    //update sonucu etkilenen satır sayısını doner
+    const rows = await this.User.update(
+      { name: "Hakan", password: "Celik" },
+      {
+        where: { uuid: id }
+      }
+    );
+    return rows;
   }
 }
 
