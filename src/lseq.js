@@ -37,7 +37,12 @@ async function connect() {
           len: [3]
         }
       },
-      password: Sequelize.STRING,
+      password: {
+        type: Sequelize.STRING,
+        validate: {
+          isAlphanumeric: true
+        }
+      },
       email: {
         type: Sequelize.STRING,
         validate: {
@@ -100,4 +105,12 @@ async function connect() {
   }
 }
 
-module.exports = connect;
+async function createUser(user) {
+  const created = await User.create({
+    name: user.name,
+    email: user.email
+  });
+}
+
+module.exports.connect = connect;
+module.exports.createUser = createUser;
