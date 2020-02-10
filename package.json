@@ -1,8 +1,8 @@
 {
-  "name": "learnSequelize",
+  "name": "lseq",
   "version": "1.0.0",
   "description": "",
-  "main": "learnSequelize.js",
+  "main": "server.js",
   "scripts": {
     "start": "node server.js"
   },

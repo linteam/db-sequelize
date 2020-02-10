@@ -1,24 +1,20 @@
 const express = require("express");
-const db = require("./src/lseq");
+const DBHandler = require("./src/lseq");
 const app = express();
 const port = 8001;
 
+const db = new DBHandler();
+
 app.listen(port, () => {
+  db.connect();
   console.log("Running server on port " + port);
 });
 
-app.get("/", async (req, res) => {
+//http://localhost:8001/mu?name=hakan&email=hakan@ibnhaldun.edu.tr&password=123
+app.get("/mu", async (req, res) => {
   try {
-    const user = await db.connect();
-    res.json(user);
-  } catch (error) {
-    res.status(404).send(error.message);
-  }
-});
-
-app.post("/user", (req,res) => {
-  try {
-    const user = req.body.user;
+    console.log();
+    const user = req.query; //req.body.user; post olsa boyle al
     await db.createUser(user);
     res.json(user);
   } catch (error) {
