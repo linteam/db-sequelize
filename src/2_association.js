@@ -29,9 +29,14 @@ class Asso {
     Asso.Post.belongsTo(CrudHandler.User);
     /***
      * Foreign KEY iliski kuruldugunda otomatik `UserId` olarak olusturulur.
-     * Ya da kolon ismini biz verebiliriz.  
+     * Ya da kolon ismini biz verebiliriz.
      * Post.belongsto(User, {foreignKey: 'userId'})
+     ***/
 
+    /***
+     * Alias, iliski kurarken modele takma isim verilebilir
+     * Include ederken ayni takma isim as ile verilir, veri cekildiginde bu takma isimle gelir.
+     * Post.belongsto(User, {as: 'UserRef'})
      ***/
 
     await DBHandler.syncConnection();
@@ -46,6 +51,7 @@ class Asso {
   async findAll() {
     const posts = await Asso.Post.findAll({
       include: [CrudHandler.User]
+      //include: [{model: CrudHandler.User, as: 'UserRef'}]
     });
     return posts;
   }
