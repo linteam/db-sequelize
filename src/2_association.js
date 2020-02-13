@@ -61,14 +61,15 @@ class Asso {
     Asso.Post.hasMany(Asso.Comment, {
       as: "All_Comments" //foreignKey = PostId in Comment Table
     });
+    //MANY TO MANY
     //Bir yazarin birden fazla postu, bir postun birden fazla yazari olabilsin
     CrudHandler.User.belongsToMany(Asso.Post, {
       as: "Articles",
-      through: "UserPost"
+      through: "UserPost" //join table name
     });
     Asso.Post.belongsToMany(CrudHandler.User, {
       as: "Authors",
-      through: "UserPost"
+      through: "UserPost" //join table name
     });
     /***
      * Foreign KEY iliski kuruldugunda otomatik `UserId` olarak olusturulur.
@@ -85,10 +86,14 @@ class Asso {
     await DBHandler.syncConnection(false);
     console.log("1 adet Post ekliyorum");
     const p1 = await Asso.Post.create({
-      AuthorUuid: userId,
       title: "First Post",
       content: "post content 1"
     });
+
+    //set add get remove
+    p1.setAuthors([userId]);
+    //findByPk ile bulduktan sonra addAuthors dersin.
+
     Asso.samplePostId = p1.uuid;
     console.log("2 adet yorum ekliyorum");
     await Asso.Comment.create({
@@ -124,6 +129,11 @@ class Asso {
             as: "Writer",
             attributes: ["name", "email"]
           }
+        },
+        {
+          model: CrudHandler.User,
+          as: "Authors",
+          attributes: [["name", "email"]]
         }
       ]
     });
