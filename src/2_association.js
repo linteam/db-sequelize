@@ -51,13 +51,24 @@ class Asso {
 
      ***/
 
-    //puts foreignKey UserId in Post table
-    Asso.Post.belongsTo(CrudHandler.User, {
-      as: "Author"
+    //puts foreignKey UserId in Comment table
+    //Her Comment'in bir yazari olsun
+    Asso.Comment.belongsTo(CrudHandler.User, {
+      as: "Writer",
+      foreignKey: "WriterUuid"
     });
-
+    //Bir Postun birden fazla commenti olabilir
     Asso.Post.hasMany(Asso.Comment, {
       as: "All_Comments" //foreignKey = PostId in Comment Table
+    });
+    //Bir yazarin birden fazla postu, bir postun birden fazla yazari olabilsin
+    CrudHandler.User.belongsToMany(Asso.Post, {
+      as: "Articles",
+      through: "UserPost"
+    });
+    Asso.Post.belongsToMany(CrudHandler.User, {
+      as: "Authors",
+      through: "UserPost"
     });
     /***
      * Foreign KEY iliski kuruldugunda otomatik `UserId` olarak olusturulur.
@@ -72,7 +83,7 @@ class Asso {
      ***/
 
     await DBHandler.syncConnection(false);
-    console.log("Post ekliyorum");
+    console.log("1 adet Post ekliyorum");
     const p1 = await Asso.Post.create({
       AuthorUuid: userId,
       title: "First Post",
@@ -81,10 +92,12 @@ class Asso {
     Asso.samplePostId = p1.uuid;
     console.log("2 adet yorum ekliyorum");
     await Asso.Comment.create({
+      WriterUuid: userId,
       PostUuid: Asso.samplePostId,
       the_comment: "yorumda mi yapmayalim"
     });
     await Asso.Comment.create({
+      WriterUuid: userId,
       PostUuid: Asso.samplePostId,
       the_comment: "second yorumda mi yapmayalim 2"
     });
@@ -99,30 +112,22 @@ class Asso {
     return authors;
   }
 
-  async getComment() {
-    // const comments = await Asso.Post.findAll({
-    //   include: [
-    //     {
-    //       model: Asso.Comment,
-    //       as: "All_Comments",
-    //       attributes: ["the_comment"]
-    //     }
-    //   ]
-    // });
-    const comments = await Asso.Post.findByPk(Asso.samplePostId, {
+  async getPost_with_Comments_Authors() {
+    const post = await Asso.Post.findByPk(Asso.samplePostId, {
       include: [
         {
           model: Asso.Comment,
           as: "All_Comments",
-          attributes: ["the_comment"]
-        },
-        {
-          model: CrudHandler.User,
-          as: "Author"
+          attributes: ["the_comment"],
+          include: {
+            model: CrudHandler.User,
+            as: "Writer",
+            attributes: ["name", "email"]
+          }
         }
       ]
     });
-    return comments;
+    return post;
   }
 }
 
