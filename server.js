@@ -69,9 +69,9 @@ app.delete("/remove", async (req, res) => {
   }
 });
 
-app.get("/posts", async (req, res) => {
+app.get("/comment", async (req, res) => {
   try {
-    const posts = await asso.findAll();
+    const posts = await asso.getComment();
     res.json(posts);
   } catch (error) {
     res.status(404).send(error.message);

@@ -25,6 +25,10 @@ class Asso {
       }
     );
 
+    Asso.Comment = DBHandler.connection.define("Comment", {
+      the_comment: Sequelize.STRING
+    });
+
     /***
      * Iliski Tipleri
       * One to One
@@ -48,7 +52,13 @@ class Asso {
      ***/
 
     //puts foreignKey UserId in Post table
-    Asso.Post.belongsTo(CrudHandler.User);
+    Asso.Post.belongsTo(CrudHandler.User, {
+      as: "Author"
+    });
+
+    Asso.Post.hasMany(Asso.Comment, {
+      as: "All_Comments" //foreignKey = PostId in Comment Table
+    });
     /***
      * Foreign KEY iliski kuruldugunda otomatik `UserId` olarak olusturulur.
      * Ya da kolon ismini biz verebiliriz.
@@ -61,21 +71,58 @@ class Asso {
      * Post.belongsto(User, {as: 'UserRef'})
      ***/
 
-    await DBHandler.syncConnection();
-
-    await Asso.Post.create({
-      UserUuid: userId,
+    await DBHandler.syncConnection(false);
+    console.log("Post ekliyorum");
+    const p1 = await Asso.Post.create({
+      AuthorUuid: userId,
       title: "First Post",
       content: "post content 1"
     });
+    Asso.samplePostId = p1.uuid;
+    console.log("2 adet yorum ekliyorum");
+    await Asso.Comment.create({
+      PostUuid: Asso.samplePostId,
+      the_comment: "yorumda mi yapmayalim"
+    });
+    await Asso.Comment.create({
+      PostUuid: Asso.samplePostId,
+      the_comment: "second yorumda mi yapmayalim 2"
+    });
   }
 
-  async findAll() {
-    const posts = await Asso.Post.findAll({
-      include: [CrudHandler.User]
+  async getAuthors() {
+    const authors = await CrudHandler.User.findAll({
+      include: [Asso.Post],
+      as: "All_Posts"
       //include: [{model: CrudHandler.User, as: 'UserRef'}]
     });
-    return posts;
+    return authors;
+  }
+
+  async getComment() {
+    // const comments = await Asso.Post.findAll({
+    //   include: [
+    //     {
+    //       model: Asso.Comment,
+    //       as: "All_Comments",
+    //       attributes: ["the_comment"]
+    //     }
+    //   ]
+    // });
+    const comments = await Asso.Post.findByPk(Asso.samplePostId, {
+      include: [
+        {
+          model: Asso.Comment,
+          as: "All_Comments",
+          attributes: ["the_comment"]
+        },
+        {
+          model: CrudHandler.User,
+          as: "Author"
+        }
+      ]
+    });
+    return comments;
   }
 }
 
