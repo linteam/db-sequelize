@@ -27,6 +27,12 @@ class Asso {
 
     //puts foreignKey UserId in Post table
     Asso.Post.belongsTo(CrudHandler.User);
+    /***
+     * Foreign KEY iliski kuruldugunda otomatik `UserId` olarak olusturulur.
+     * Ya da kolon ismini biz verebiliriz.  
+     * Post.belongsto(User, {foreignKey: 'userId'})
+
+     ***/
 
     await DBHandler.syncConnection();
 
