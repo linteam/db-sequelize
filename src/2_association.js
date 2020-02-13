@@ -25,6 +25,28 @@ class Asso {
       }
     );
 
+    /***
+     * Iliski Tipleri
+      * One to One
+        belongsTo() or hasOne()
+        hasone belongsTo'nun tersi Post.hasOne(User) dedigimizde
+        posts tablosuna userID eklenir.
+     
+      * One to Many
+        User.hasMany(Post) demek 1 User bir cok Post'a sahip olabilir demek.
+        Bunun icin post tablosuna userId ekleniyor. User'a ait Postlar cekilebiliyor.
+        Boylece.
+
+      * Many to Many
+        belongsToMany() bunu kullanirken iki tabloya da uyguluyoruz.
+          User.belongsToMany(Post)
+          Post.belongsToMany(User)
+        bu her tablonun PK'larindan olusan 2 kolonluk bir Join table olusturur.
+        Boylece sorgu yapilinca iliskiden array doner.
+
+
+     ***/
+
     //puts foreignKey UserId in Post table
     Asso.Post.belongsTo(CrudHandler.User);
     /***
